@@ -17,6 +17,20 @@
 
 ---
 
+## 🌐 在线试玩（发个链接就能玩）
+
+**▶ <https://pb0360.github.io/shinjuku-showdown/>**
+
+点开即玩，不用装任何东西。手机横屏体验最好；iPhone Safari「添加到主屏幕」、
+Android Chrome 菜单「安装应用」之后可以全屏、离线玩（PWA）。
+
+- 源码仓库：<https://github.com/Pb0360/shinjuku-showdown>
+- 部署方式：`main` 分支一推送，GitHub Actions 就自动把 `src/` 发布到 GitHub Pages
+  （配置见 [`.github/workflows/pages.yml`](.github/workflows/pages.yml)）。
+  改完代码 `git push` 等一两分钟，线上就是新版。
+
+---
+
 ## 立刻开始玩
 
 | 方式 | 怎么做 | 说明 |
