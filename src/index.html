@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#F2ECE0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>新宿对决 · SHINJUKU SHOWDOWN</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<!-- iPad / iPhone「添加到主屏幕」后的启动图（避免启动时白闪） -->
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-10.2-portrait.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-10.2-landscape.png" media="(device-width: 1024px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-10.9-portrait.png" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-10.9-landscape.png" media="(device-width: 1180px) and (device-height: 820px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-pro-11-portrait.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-pro-11-landscape.png" media="(device-width: 1194px) and (device-height: 834px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-pro-12.9-portrait.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-pro-12.9-landscape.png" media="(device-width: 1366px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-mini-portrait.png" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="assets/splash/ipad-mini-landscape.png" media="(device-width: 1133px) and (device-height: 744px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============================ 主菜单 ============================ -->
+  <section id="screen-menu" class="screen active">
+    <div class="menu-inner">
+      <div class="logo">
+        <div class="logo-mark">
+          <span class="dot blue"></span><span class="dot red"></span>
+        </div>
+        <h1>新宿对决</h1>
+        <p class="sub">SHINJUKU&nbsp;SHOWDOWN</p>
+        </div>
+      <div class="menu-buttons">
+        <button class="btn primary big" data-act="select">开始对决</button>
+        <button class="btn" data-act="settings">设置</button>
+        <button class="btn" data-act="help">玩法说明</button>
+      </div>
+      <p class="version" id="version-label"></p>
+    </div>
+  </section>
+
+  <!-- ============================ 角色选择 ============================ -->
+  <section id="screen-select" class="screen">
+    <header class="topbar">
+      <button class="btn ghost" data-act="menu">← 返回</button>
+      <h2>选择角色</h2>
+      <button class="btn primary" data-act="fight">开始对决</button>
+    </header>
+    <div class="sel-body" id="sel-body"></div>
+  </section>
+
+  <!-- ============================ 对战 ============================ -->
+  <section id="screen-battle" class="screen">
+    <div class="battle-top">
+      <div class="hpwrap" id="hp0"></div>
+      <div class="battle-mid">
+        <span class="clock" id="clock">0:00</span>
+        <button class="btn tiny ghost" data-act="pause">暂停</button>
+      </div>
+      <div class="hpwrap right" id="hp1"></div>
+    </div>
+    <div class="stage" id="stage">
+      <canvas id="arena"></canvas>
+      <div class="callout" id="callout">
+        <div class="co-inner">
+          <div class="co-title"></div>
+          <div class="co-sub"></div>
+        </div>
+      </div>
+      <div class="battle-toast" id="toast"></div>
+      <div class="bind-badge" id="bind-badge">定身</div>
+    </div>
+    <div class="skillbar" id="skillbar"></div>
+  </section>
+
+  <!-- ============================ 结算 ============================ -->
+  <section id="screen-result" class="screen">
+    <div class="result-inner" id="result-inner"></div>
+  </section>
+
+  <!-- ============================ 弹窗 ============================ -->
+  <div class="modal" id="modal-skill">
+    <div class="modal-card wide">
+      <header class="modal-head">
+        <h3 id="skill-modal-name">技能</h3>
+        <button class="btn ghost tiny" data-close="modal-skill">关闭</button>
+      </header>
+      <div class="modal-body" id="skill-modal-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings">
+    <div class="modal-card">
+      <header class="modal-head">
+        <h3>设置</h3>
+        <button class="btn ghost tiny" data-close="modal-settings">关闭</button>
+      </header>
+      <div class="modal-body">
+        <label class="row"><span>音效音量</span><input type="range" id="opt-sfx" min="0" max="1" step="0.05"></label>
+        <label class="row"><span>语音音量</span><input type="range" id="opt-voice" min="0" max="1" step="0.05"></label>
+        <label class="row"><span>背景音乐</span><input type="range" id="opt-bgm" min="0" max="1" step="0.05"></label>
+        <label class="row"><span>伤害飘字</span><input type="checkbox" id="opt-numbers"></label>
+        <label class="row"><span>镜头震动</span><input type="range" id="opt-shake" min="0" max="2" step="0.1"></label>
+        <label class="row"><span>技能名大字</span><input type="checkbox" id="opt-callout"></label>
+        <p class="note">黑闪概率已锁定为 <b>2.5%</b>／次碰撞（虎杖悠仁的被动再 +1%），不再开放调节。</p>
+        <div class="row-buttons">
+          <button class="btn" id="opt-reset">恢复默认</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-pause">
+    <div class="modal-card">
+      <header class="modal-head"><h3>已暂停</h3></header>
+      <div class="modal-body">
+        <div class="row-buttons vertical">
+          <button class="btn primary" data-act="resume">继续对决</button>
+          <button class="btn" data-act="restart">重开一局</button>
+          <button class="btn" data-act="settings">设置</button>
+          <button class="btn ghost" data-act="menu">回到主菜单</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-help">
+    <div class="modal-card wide">
+      <header class="modal-head">
+        <h3>玩法说明</h3>
+        <button class="btn ghost tiny" data-close="modal-help">关闭</button>
+      </header>
+      <div class="modal-body help-body">
+        <p><b>核心规则</b>：你和对手各操控一个会弹性反弹的「角色球」。<b>双方都无法控制球的移动</b>，
+           只能通过释放技能来赢。球撞墙不减速，球撞球双方各吃少量伤害。</p>
+        <p><b>操作</b>：<kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd>（或 <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>）
+           释放三个技能。手机点下方按钮。<kbd>ESC</kbd> 暂停，<kbd>R</kbd> 重开，<kbd>F</kbd> 全屏。</p>
+        <p><b>充能 vs 冷却</b>：技能按钮上如果是一排小点，说明它是<i>充能型</i>——
+           攒够点数可以连续释放；如果是转圈的进度环，就是普通的<i>冷却型</i>。</p>
+        <p><b>伤害类型</b>：<i>弹幕</i>会被五条悟的「无下限术式」免疫；<i>直伤</i>（球体碰撞、黑闪、
+           无量空处、被宿傩「领域展延」强化过的命中）免疫不了。</p>
+        <p><b>黑闪</b>：每次球球碰撞，每个角色独立有 <b>1%</b> 概率打出黑闪——
+           伤害变成原来的 2.5 次方（8 → 181），自己血量回满、技能 CD 全恢复。
+           一局平均约 15 次碰撞，所以黑闪大约每 4 局就能见到一次。</p>
+        <p><b>赢法</b>：单局定胜负，把对手血量打到 0。</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 逻辑层（无 DOM 依赖，可被 tools/sim.js 复用） -->
+<script src="data/characters.js"></script>
+  <script src="data/custom.js"></script>
+<script src="core/math.js"></script>
+<script src="game/ball.js"></script>
+<script src="game/projectile.js"></script>
+<script src="game/field.js"></script>
+<script src="game/skills/gojo.js"></script>
+<script src="game/skills/sukuna.js"></script>
+<script src="game/skills/yuji.js"></script>
+<script src="game/skills/naruto.js"></script>
+<script src="game/skills/pain.js"></script>
+<script src="game/skills/minato.js"></script>
+<script src="game/ai.js"></script>
+<script src="game/match.js"></script>
+
+<!-- 表现层 -->
+<script src="core/loop.js"></script>
+<script src="core/audio.js"></script>
+<script src="core/fx.js"></script>
+<script src="render/renderer.js"></script>
+<script src="ui/ui.js"></script>
+  <script src="ui/custom-editor.js"></script>
+<!-- 语音清单（把自己裁好的语音丢进 assets/audio/voice/<角色>/ 后运行 node tools/scan_voice.js 生成） -->
+<script src="assets/audio/voice/manifest.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

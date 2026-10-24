@@ -1,0 +1,75 @@
+{
+  "name": "shinjuku-duel",
+  "version": "0.1.0",
+  "description": "新宿对决 —— 弹球对战（五条悟 / 宿傩 / 虎杖悠仁）",
+  "author": "Shinjuku Duel",
+  "license": "MIT",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "web": "node tools/serve.js",
+    "sim": "node tools/sim.js --n 2000",
+    "test": "node tools/smoke.js",
+    "shots": "node tools/smoke.js --shots",
+    "sfx": "node tools/gen_sfx.js",
+    "voice": "node tools/scan_voice.js",
+    "icon": "python tools/gen_icon.py",
+    "electron": "electron .",
+    "pack": "electron-builder --win --dir",
+    "share": "node tools/make-share.js"
+  },
+  "build": {
+    "appId": "com.shinjuku.duel",
+    "productName": "ShinjukuDuel",
+    "copyright": "新宿对决",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "package.json",
+      "!src/_smoke.html",
+      "!**/*.map"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "新宿对决",
+      "artifactName": "新宿对决-安装版-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "新宿对决-免安装-${version}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

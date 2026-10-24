@@ -1,0 +1,544 @@
+/* ==========================================================================
+ * 新宿对决 —— 米白简约 UI
+ * 设计：暖白纸面 + 细墨线 + 硬偏移纸片阴影；无霓虹、无暗黑科技风
+ * ========================================================================== */
+
+:root {
+  --paper: #FFFDF8;
+  --paper-2: #F7F2E7;
+  --page: #F2ECE0;
+  --ink: #2B2B2B;
+  --ink-2: #6B6459;
+  --ink-3: #A79F92;
+  --line: #DCD4C4;
+  --gojo: #3B82F6;
+  --gojo-2: #1D4ED8;
+  --sukuna: #8B1A1A;
+  --sukuna-2: #4A0D0D;
+  --yuji: #E4477A;
+  --yuji-2: #7A1030;
+  --shadow: 3px 3px 0 rgba(43, 43, 43, 0.12);
+  --shadow-sm: 2px 2px 0 rgba(43, 43, 43, 0.10);
+  --radius: 12px;
+  --top-h: 54px;
+  --skill-h: 96px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--page);
+  color: var(--ink);
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  /* iOS / iPadOS：禁掉长按弹菜单、双击缩放、橡皮筋回弹 */
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+#app { position: fixed; inset: 0; }
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.screen.active { display: flex; }
+
+/* ------------------------------------------------------------------ 通用按钮 */
+.btn {
+  appearance: none;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform .06s ease, box-shadow .06s ease, background .15s ease;
+}
+.btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 rgba(0,0,0,0); }
+.btn.primary { background: var(--ink); color: var(--paper); }
+.btn.ghost { border-color: var(--line); color: var(--ink-2); background: transparent; box-shadow: none; }
+.btn.tiny { padding: 6px 12px; font-size: 13px; border-width: 1.5px; }
+.btn.big { padding: 16px 46px; font-size: 20px; letter-spacing: .12em; }
+.btn[disabled] { opacity: .45; pointer-events: none; }
+
+kbd {
+  display: inline-block; min-width: 26px; text-align: center;
+  border: 1.5px solid var(--line); border-bottom-width: 3px;
+  border-radius: 6px; padding: 1px 6px; font-size: 13px;
+  font-family: ui-monospace, Menlo, monospace; background: var(--paper);
+}
+
+/* ------------------------------------------------------------------ 主菜单 */
+.menu-inner {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 34px; padding: 24px;
+}
+.logo { text-align: center; }
+.logo-mark { display: flex; gap: 10px; justify-content: center; margin-bottom: 18px; }
+.logo-mark .dot { width: 22px; height: 22px; border-radius: 50%; display: block; }
+.logo-mark .dot.blue { background: radial-gradient(circle at 35% 35%, #fff, #93C5FD 40%, var(--gojo)); }
+.logo-mark .dot.red { background: radial-gradient(circle at 35% 35%, #fff, #C2705C 40%, var(--sukuna)); }
+.logo h1 {
+  margin: 0; font-size: clamp(44px, 11vw, 76px); letter-spacing: .16em;
+  font-weight: 800; text-indent: .16em;
+}
+.logo .sub {
+  margin: 6px 0 0; font-size: clamp(11px, 2.6vw, 14px); letter-spacing: .42em;
+  color: var(--ink-3); text-indent: .42em;
+}
+.logo .tag { margin: 14px 0 0; font-size: 13px; color: var(--ink-2); }
+.menu-buttons { display: flex; flex-direction: column; gap: 12px; width: min(280px, 76vw); }
+.menu-buttons .btn { width: 100%; }
+.version { position: absolute; bottom: 14px; font-size: 12px; color: var(--ink-3); }
+
+/* ------------------------------------------------------------------ 顶栏 */
+.topbar {
+  height: var(--top-h); flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 0 14px;
+  border-bottom: 1.5px solid var(--line);
+}
+.topbar h2 { margin: 0; font-size: 17px; letter-spacing: .1em; font-weight: 700; }
+
+/* ------------------------------------------------------------------ 角色选择 */
+.sel-body {
+  flex: 1; min-height: 0; display: grid; gap: 12px;
+  grid-template-columns: 1fr 1fr; padding: 12px 14px 0;
+}
+.sel-hint { flex: 0 0 auto; margin: 0; padding: 8px 14px 12px; font-size: 12px; color: var(--ink-3); text-align: center; }
+
+.slot {
+  min-height: 0; display: flex; flex-direction: column; gap: 8px;
+  border: 1.5px solid var(--line); border-radius: var(--radius);
+  background: var(--paper); padding: 10px; overflow-y: auto;
+  box-shadow: var(--shadow-sm);
+}
+.slot-head {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);   /* 以后角色多了也放得下 */
+  gap: 8px;
+}
+.pick {
+  flex: 1; border: 2px solid var(--line); border-radius: 9px; background: var(--paper-2);
+  padding: 7px 4px; font-size: 13px; font-weight: 700; font-family: inherit; color: var(--ink-2);
+  cursor: pointer; transition: all .12s ease;
+}
+.pick.on { border-color: var(--ink); color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
+.pick.on[data-char="gojo"] { border-color: var(--gojo); color: var(--gojo-2); }
+.pick.on[data-char="sukuna"] { border-color: var(--sukuna); color: var(--sukuna-2); }
+.pick.on[data-char="yuji"] { border-color: var(--yuji); color: var(--yuji-2); }
+/* 随机按钮：虚线边框，和具体角色区分开 */
+.pick-random { border-style: dashed; color: var(--ink-2); letter-spacing: .12em; }
+.pick-random:hover { border-color: var(--ink-2); background: var(--paper-2); }
+
+.who { display: flex; align-items: center; gap: 10px; }
+.who .orb { width: 44px; height: 44px; border-radius: 50%; flex: 0 0 auto; }
+.who .orb.gojo { background: radial-gradient(circle at 34% 32%, #fff, #BFDBFE 38%, var(--gojo) 100%); border: 2px solid var(--gojo-2); }
+.who .orb.sukuna { background: radial-gradient(circle at 34% 32%, #fff, #E7C4B6 38%, var(--sukuna) 100%); border: 2px solid var(--sukuna-2); }
+.who .orb.yuji { background: radial-gradient(circle at 34% 32%, #fff, #F8C6D6 38%, var(--yuji) 100%); border: 2px solid var(--yuji-2); }
+.who .meta { min-width: 0; }
+.who .nm { font-size: 16px; font-weight: 700; letter-spacing: .06em; }
+.who .ti { font-size: 11px; color: var(--ink-3); }
+.who .hp { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+
+.skill-list { display: flex; flex-direction: column; gap: 6px; }
+.skill-row {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  border: 1.5px solid var(--line); border-radius: 9px; background: var(--paper-2);
+  padding: 7px 9px; text-align: left; font-family: inherit; cursor: pointer;
+  transition: all .12s ease;
+}
+.skill-row:hover { background: #fff; border-color: var(--ink-3); }
+.skill-row .idx {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 5px;
+  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+  background: var(--ink); color: var(--paper);
+}
+.skill-row.passive .idx { background: var(--ink-3); }
+.skill-row .txt { min-width: 0; flex: 1; }
+.skill-row .nm { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.skill-row .keycap {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--ink-soft);
+  vertical-align: 1px;
+}
+.skill-row .cd { font-size: 11px; color: var(--ink-3); }
+.skill-row .arrow { color: var(--ink-3); font-size: 12px; }
+.slot .side-tag { font-size: 11px; letter-spacing: .2em; color: var(--ink-3); text-align: center; }
+
+/* ------------------------------------------------------------------ 对战 */
+#screen-battle { padding: 0; }
+.battle-top {
+  flex: 0 0 auto; height: var(--top-h);
+  display: flex; align-items: center; gap: 10px; padding: 6px 12px;
+}
+.hpwrap { flex: 1; min-width: 0; }
+.hpwrap.right .hp-inner { flex-direction: row-reverse; }
+.hp-inner { display: flex; align-items: center; gap: 8px; }
+.hp-inner .nm { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.hp-inner .bar {
+  position: relative; flex: 1; height: 16px; border: 2px solid var(--ink);
+  border-radius: 8px; background: #fff; overflow: hidden; min-width: 40px;
+}
+/* 兜底：任何角色都至少有颜色 */
+.hp-inner .fill { background: var(--ink-2); position: absolute; inset: 0; transform-origin: left center; transition: width .12s linear; }
+.hpwrap.right .hp-inner .fill { transform-origin: right center; }
+.hp-inner .fill.gojo { background: linear-gradient(90deg, #93C5FD, var(--gojo)); }
+.hp-inner .fill.sukuna { background: linear-gradient(90deg, #C2705C, var(--sukuna)); }
+.hpwrap.low .bar { animation: lowhp .7s infinite alternate; }
+@keyframes lowhp { from { background: #fff; } to { background: #FFE4E4; } }
+.hp-inner .clones { font-size: 11px; font-weight: 700; color: var(--ink-2); margin-left: 8px; white-space: nowrap; }
+.hp-inner .num { font-size: 12px; font-weight: 700; color: var(--ink-2); font-variant-numeric: tabular-nums; min-width: 52px; }
+.hpwrap.right .num { text-align: right; }
+.hp-inner .shield { font-size: 11px; color: var(--gojo-2); font-weight: 700; }
+
+.battle-mid { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.clock { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+.stage {
+  flex: 1; min-height: 0; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+#arena {
+  display: block; touch-action: none; border-radius: 6px;
+  box-shadow: 0 6px 22px rgba(43,43,43,.12);
+}
+
+/* 技能名大字（放在场地上方三分之一，避免遮住正中的交火） */
+.callout {
+  position: absolute; inset: 0; display: flex;
+  align-items: flex-start; justify-content: center;
+  padding-top: 13%;
+  pointer-events: none; opacity: 0;
+}
+.callout.show { animation: coIn .85s cubic-bezier(.16,.9,.3,1) forwards; }
+.callout.big.show { animation: coInBig 1.5s cubic-bezier(.16,.9,.3,1) forwards; }
+.callout.blackflash.show .co-title { color: #1A0000; text-shadow: 4px 0 0 #FF0033, -4px 0 0 #8B0000, 0 0 26px rgba(255,0,51,.55); }
+.callout.blackflash.show { animation: coBF 1.6s cubic-bezier(.16,.9,.3,1) forwards; }
+.co-inner { text-align: center; padding: 0 16px; }
+.co-title {
+  font-size: clamp(34px, 8.6vw, 68px); font-weight: 800; letter-spacing: .1em;
+  color: var(--ink); text-shadow: 0 3px 0 rgba(255,255,255,.9), 4px 6px 0 rgba(43,43,43,.16);
+  white-space: nowrap;
+}
+.callout.big .co-title { font-size: clamp(42px, 10vw, 84px); letter-spacing: .14em; }
+.callout .co-title.long { font-size: clamp(34px, 8vw, 66px) !important; letter-spacing: .1em; }
+.callout .co-title.xlong { font-size: clamp(26px, 6vw, 50px) !important; letter-spacing: .06em; }
+.co-sub {
+  margin-top: 6px; font-size: clamp(11px, 2.8vw, 15px); letter-spacing: .34em;
+  color: var(--ink-2); text-indent: .34em; font-weight: 600;
+}
+@keyframes coIn {
+  0% { opacity: 0; transform: scale(.82) translateY(14px); }
+  16% { opacity: 1; transform: scale(1.04) translateY(0); }
+  30% { transform: scale(1); }
+  74% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.02) translateY(-10px); }
+}
+@keyframes coInBig {
+  0% { opacity: 0; transform: scale(.6) translateY(30px); letter-spacing: .4em; }
+  14% { opacity: 1; transform: scale(1.08); }
+  26% { transform: scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.06) translateY(-16px); }
+}
+@keyframes coBF {
+  0% { opacity: 0; transform: scale(.5) rotate(-3deg); }
+  8% { opacity: 1; transform: scale(1.16) rotate(2deg); }
+  14% { transform: scale(1.0) rotate(-1deg); }
+  20% { transform: scale(1.06) rotate(1deg); }
+  28% { transform: scale(1); }
+  86% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.1); }
+}
+
+.battle-toast {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+  font-size: 13px; font-weight: 700; color: var(--ink-2);
+  background: rgba(255,253,248,.92); border: 1.5px solid var(--line);
+  border-radius: 8px; padding: 6px 14px; opacity: 0; transition: opacity .2s ease;
+  pointer-events: none; white-space: nowrap;
+}
+.battle-toast.show { opacity: 1; }
+
+/* 被无量空处定身时的提示 */
+.bind-badge {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.9);
+  font-size: 18px; font-weight: 800; letter-spacing: .3em; text-indent: .3em;
+  color: #fff; background: rgba(37, 99, 235, .92);
+  border: 2px solid #fff; border-radius: 10px; padding: 8px 20px;
+  box-shadow: 0 6px 22px rgba(37,99,235,.45);
+  opacity: 0; transition: opacity .12s ease; pointer-events: none;
+}
+.bind-badge.show { opacity: 1; animation: bindPulse .5s infinite alternate; }
+@keyframes bindPulse { from { transform: translate(-50%, -50%) scale(.96); } to { transform: translate(-50%, -50%) scale(1.04); } }
+.skillbar.bound .skill-btn { filter: grayscale(.85); opacity: .55; }
+
+/* ------------------------------------------------------------------ 技能栏 */
+.skillbar {
+  flex: 0 0 auto; height: var(--skill-h);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+}
+.skill-btn {
+  position: relative; width: min(30vw, 132px); height: 76px;
+  border: 2px solid var(--ink); border-radius: 12px; background: var(--paper);
+  box-shadow: var(--shadow); cursor: pointer; overflow: hidden;
+  font-family: inherit; color: var(--ink); padding: 0;
+  transition: transform .07s ease;
+  touch-action: manipulation;
+}
+.skill-btn:active { transform: translate(2px, 2px); }
+.skill-btn .key {
+  position: absolute; top: 5px; left: 7px; font-size: 11px; font-weight: 700;
+  color: var(--ink-3); letter-spacing: .08em;
+}
+.skill-btn .nm { position: absolute; left: 0; right: 0; top: 22px; font-size: 14px; font-weight: 700; letter-spacing: .04em; }
+.skill-btn .hint { position: absolute; left: 0; right: 0; bottom: 8px; font-size: 11px; color: var(--ink-3); }
+.skill-btn .cdmask {
+  position: absolute; inset: 0; background: rgba(43,43,43,.06); pointer-events: none;
+}
+.skill-btn .cdtext {
+  position: absolute; right: 8px; top: 6px; font-size: 13px; font-weight: 800;
+  font-variant-numeric: tabular-nums; color: var(--ink-2);
+}
+/* 长按技能蓄力中：轻微内缩 + 描边发亮（0.2 秒很短，所以做得很轻） */
+.skill-btn.charging { transform: scale(0.965); border-color: var(--ink); box-shadow: 0 0 0 3px rgba(43,43,43,.10); }
+.skill-btn.charging .nm { opacity: .75; }
+.skill-btn.notready { background: var(--paper-2); }
+/* 够不着（超出射程）：压暗 + 降低对比，让人一眼知道"按了也没用" */
+.skill-btn.outofrange { background: var(--paper-2); opacity: .55; border-style: dashed; }
+.skill-btn.outofrange .nm { color: var(--ink-3); }
+.skill-btn.outofrange .hint { color: var(--ink-3); }
+.skill-btn.notready .nm { color: var(--ink-3); }
+.skill-btn.ready { animation: readyPulse .45s ease; }
+.skill-btn.gojo { border-color: var(--gojo-2); }
+.skill-btn.sukuna { border-color: var(--sukuna-2); }
+.skill-btn.yuji { border-color: var(--yuji-2); }
+.skill-btn.ult .nm { font-size: 15px; }
+.pips { position: absolute; left: 0; right: 0; bottom: 26px; display: flex; gap: 4px; justify-content: center; }
+.pips i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--ink-3); display: block; }
+.pips i.on { background: var(--ink); border-color: var(--ink); }
+.pips i.on.gojo { background: var(--gojo); border-color: var(--gojo-2); }
+.pips i.on.sukuna { background: var(--sukuna); border-color: var(--sukuna-2); }
+@keyframes readyPulse { 0% { box-shadow: 0 0 0 0 rgba(43,43,43,.35), var(--shadow); } 100% { box-shadow: 0 0 0 12px rgba(43,43,43,0), var(--shadow); } }
+
+/* ------------------------------------------------------------------ 结算 */
+.result-inner { flex: 1; min-height: 0; overflow-y: auto; padding: 22px 16px 30px; }
+.result-head { text-align: center; margin-bottom: 18px; }
+.result-head .win { font-size: clamp(30px, 8vw, 52px); font-weight: 800; letter-spacing: .12em; }
+.result-head .win.gojo { color: var(--gojo-2); }
+.result-head .win.sukuna { color: var(--sukuna-2); }
+.result-head .sub { margin-top: 6px; font-size: 13px; color: var(--ink-2); letter-spacing: .1em; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 720px; margin: 0 auto; }
+.card {
+  border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--paper);
+  padding: 12px; box-shadow: var(--shadow-sm);
+}
+.card h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: .08em; }
+.stat-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; color: var(--ink-2); }
+.stat-row b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.dmgbar { margin: 5px 0; }
+.dmgbar .lbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
+.dmgbar .track { height: 7px; border-radius: 4px; background: var(--paper-2); overflow: hidden; margin-top: 3px; }
+.dmgbar .fill { height: 100%; border-radius: 4px; }
+.result-buttons { display: flex; gap: 10px; justify-content: center; margin: 22px auto 0; flex-wrap: wrap; }
+
+/* ------------------------------------------------------------------ 弹窗 */
+.modal {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  background: rgba(43,43,43,.32); padding: 20px; z-index: 50;
+}
+.modal.show { display: flex; }
+/* 万一同屏出现多个弹窗，层级必须是「后开的压住先开的」 */
+#modal-pause { z-index: 50; }
+#modal-settings { z-index: 60; }
+#modal-help { z-index: 60; }
+#modal-skill { z-index: 70; }
+.modal-card {
+  width: min(460px, 100%); max-height: 88vh; display: flex; flex-direction: column;
+  background: var(--paper); border: 2px solid var(--ink); border-radius: 14px;
+  box-shadow: 6px 6px 0 rgba(43,43,43,.18); overflow: hidden;
+}
+.modal-card.wide { width: min(680px, 100%); }
+.modal-head {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 12px 14px; border-bottom: 1.5px solid var(--line);
+}
+.modal-head h3 { margin: 0; font-size: 16px; letter-spacing: .06em; }
+.modal-body { padding: 14px; overflow-y: auto; font-size: 14px; }
+.modal-body .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 14px; }
+.modal-body .row input[type=range] { flex: 1; max-width: 200px; accent-color: var(--ink); }
+.modal-body .row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--ink); }
+.modal-body .row input[type=number] { width: 110px; padding: 6px 8px; border: 1.5px solid var(--line); border-radius: 7px; font-family: inherit; font-size: 14px; }
+.note { font-size: 12px; color: var(--ink-3); line-height: 1.6; margin: 8px 0 0; }
+.row-buttons { display: flex; gap: 10px; margin-top: 12px; }
+.row-buttons.vertical { flex-direction: column; }
+.row-buttons .btn { flex: 1; }
+.help-body p { line-height: 1.85; margin: 0 0 12px; color: var(--ink-2); }
+.help-body b { color: var(--ink); }
+.help-body i { color: var(--gojo-2); font-style: normal; font-weight: 600; }
+.skill-detail { white-space: pre-wrap; line-height: 1.85; font-size: 14px; color: var(--ink-2); }
+.skill-detail .meta { display: flex; gap: 16px; margin-bottom: 10px; font-size: 13px; color: var(--ink); font-weight: 700; }
+
+/* ------------------------------------------------------------------ 手机适配 */
+@media (max-width: 820px) {
+  :root { --top-h: 46px; --skill-h: 88px; }
+  .sel-body { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .slot { padding: 8px; }
+  .skill-row .nm { font-size: 12px; }
+  .result-grid { grid-template-columns: 1fr; }
+  .battle-top { padding: 4px 8px; gap: 6px; }
+  .hp-inner .clones { font-size: 11px; font-weight: 700; color: var(--ink-2); margin-left: 8px; white-space: nowrap; }
+.hp-inner .num { display: none; }
+  .menu-buttons { width: min(240px, 70vw); }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  :root { --top-h: 40px; --skill-h: 74px; }
+  .skill-btn { height: 60px; }
+  .skill-btn .hint { display: none; }
+  .skill-btn .nm { top: 16px; font-size: 13px; }
+  .logo h1 { font-size: 40px; }
+}
+
+/* ------------------------------------------------------------------ iPad / 大屏平板 */
+/* 触屏标记由 main.js 打在 <html> 上（比 CSS 的 pointer:coarse 更可靠） */
+@media (min-width: 760px) {
+  html.touch { --top-h: 62px; --skill-h: 132px; }
+  html.touch .skill-btn { width: min(26vw, 196px); height: 108px; border-radius: 16px; }
+  html.touch .skill-btn .key { font-size: 13px; top: 8px; left: 11px; }
+  html.touch .skill-btn .nm { font-size: 20px; top: 36px; }
+  html.touch .skill-btn .hint { font-size: 14px; bottom: 12px; }
+  html.touch .skill-btn .cdtext { font-size: 18px; right: 12px; top: 9px; }
+  html.touch .pips { bottom: 42px; }
+  html.touch .pips i { width: 13px; height: 13px; border-width: 2px; }
+  html.touch .hp-inner .nm { font-size: 16px; }
+  html.touch .hp-inner .bar { height: 20px; }
+  html.touch .hp-inner .clones { font-size: 11px; font-weight: 700; color: var(--ink-2); margin-left: 8px; white-space: nowrap; }
+.hp-inner .num { font-size: 14px; }
+  html.touch .clock { font-size: 19px; }
+  html.touch .bind-badge { font-size: 26px; padding: 12px 30px; }
+}
+
+/* iPad 横屏：技能栏挪到右侧竖排 —— 方形场地就能吃满整个高度（场地能大一圈） */
+@media (orientation: landscape) and (min-width: 900px) {
+  html.touch #screen-battle {
+    display: none;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr auto;
+  }
+  html.touch #screen-battle.active { display: grid; }
+  html.touch #screen-battle .battle-top { grid-column: 1 / -1; grid-row: 1; }
+  html.touch #screen-battle .stage { grid-column: 1; grid-row: 2; }
+  html.touch #screen-battle .skillbar {
+    grid-column: 2; grid-row: 2;
+    flex-direction: column;
+    height: auto;
+    width: 250px;
+    gap: 14px;
+    padding: 16px 18px calc(16px + env(safe-area-inset-bottom));
+  }
+  html.touch .skill-btn { width: 100%; height: 104px; }
+  html.touch .skill-btn .nm { top: 34px; }
+  html.touch .pips { bottom: 40px; }
+}
+
+/* ============ 自定义角色编辑器 ============ */
+.pick-custom { border-style: dashed !important; color: var(--ink-2) !important; }
+
+.ce-mask {
+  position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 90;
+  background: rgba(43,43,43,.34);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.ce-mask.on { display: flex; }
+
+.ce-panel {
+  width: 880px; max-width: 100%; max-height: 100%;
+  background: var(--paper); border: var(--line); border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(43,43,43,.22);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.ce-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: var(--line);
+}
+.ce-title { font-size: 17px; font-weight: 800; letter-spacing: .5px; }
+.ce-x {
+  border: var(--line); background: var(--paper); border-radius: 8px;
+  width: 30px; height: 30px; cursor: pointer; font-size: 14px; color: var(--ink-2);
+}
+.ce-x:hover { background: var(--paper-2); }
+
+.ce-body { overflow: auto; padding: 16px 18px 20px; }
+.ce-sub {
+  font-size: 12px; font-weight: 700; color: var(--ink-2);
+  letter-spacing: .6px; margin: 14px 0 8px;
+}
+.ce-sub:first-child { margin-top: 0; }
+
+.ce-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ce-lb { width: 44px; font-size: 13px; font-weight: 700; color: var(--ink-2); flex: none; }
+.ce-input, .ce-select {
+  border: var(--line); background: var(--paper); border-radius: 8px;
+  padding: 7px 10px; font-size: 13px; color: var(--ink);
+  font-family: inherit; min-width: 0;
+}
+.ce-input { width: 170px; }
+.ce-select { flex: 1; }
+.ce-input:focus, .ce-select:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
+.ce-hint { font-size: 11.5px; color: var(--ink-2); line-height: 1.6; }
+
+.ce-actions { display: flex; gap: 8px; margin-top: 14px; }
+.ce-btn {
+  border: var(--line); background: var(--paper); color: var(--ink);
+  border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+}
+.ce-btn:hover { background: var(--paper-2); }
+.ce-btn-main { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.ce-btn-main:hover { background: #000; }
+.ce-btn-sm { padding: 5px 10px; font-size: 12px; }
+.ce-btn-danger { color: #B4232A; border-color: rgba(180,35,42,.35); }
+.ce-btn-danger:hover { background: rgba(180,35,42,.07); }
+
+.ce-listwrap { margin-top: 6px; }
+.ce-list { display: flex; flex-direction: column; gap: 8px; }
+.ce-empty { font-size: 12.5px; color: var(--ink-2); padding: 10px 0; }
+.ce-item {
+  display: flex; align-items: center; gap: 8px;
+  border: var(--line); border-radius: 10px; padding: 9px 11px; background: var(--paper-2);
+}
+.ce-iteminfo { flex: 1; min-width: 0; }
+.ce-itemname { font-size: 13.5px; font-weight: 800; }
+.ce-itemmeta {
+  font-size: 11.5px; color: var(--ink-2); margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+html.touch .ce-input { width: 130px; }
+html.touch .ce-btn { padding: 9px 13px; }

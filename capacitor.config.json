@@ -1,0 +1,13 @@
+{
+  "appId": "com.shinjuku.duel",
+  "appName": "新宿对决",
+  "webDir": "src",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#F2ECE0"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

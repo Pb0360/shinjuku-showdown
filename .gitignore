@@ -1,0 +1,21 @@
+# 依赖与缓存（体积大，不用提交）
+node_modules/
+.npm-cache/
+.electron-cache/
+.electron-builder-cache/
+.tmp/
+
+# 打包产物（体积大，走 Release 发布，不进仓库）
+dist/
+*.apk
+新宿对决-网页版.zip
+
+# 测试临时文件与截图
+src/_smoke.html
+tools/_tmp/
+tools/shots/
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
